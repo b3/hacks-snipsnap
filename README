@@ -1,5 +1,5 @@
-What is this hacks anyway ?
----------------------------
+What are these hacks anyway ?
+-----------------------------
 
 I used to manage a wiki/blog website using the Snip Snap [SNIPSNAP]
 system for an organization I am involved in. I did not choose this
@@ -9,8 +9,9 @@ greediness and very poor documentation of the storage data structure.
 
 Once its developpement ceased and after numerous crashes due to memory
 lack on the hosting computer I decide to change the wiki system to
-another one much more supported and documented. Unfortunately since no
-good documentation of the content storage structure was available this
+another one much more supported and documented (I choose Ikiwiki
+[IKIWIKI] for those who are interested). Unfortunately since no good
+documentation of the content storage structure was available this
 turns to be a nightmare.
 
 I thus decide to document everything I can and to set up some tools
@@ -18,7 +19,7 @@ enabling one to get ride of this system without losing data stored
 into it.
 
 How to dump data stored in a SNIP-SNAP system
-----------------------------------------------
+---------------------------------------------
 
 For the explanation I consider : DEST=/tmp/snips
 
@@ -121,4 +122,5 @@ What is available here ?
 References
 ----------
 
+[IKIWIKI]: http://ikiwiki.info
 [SNIPSNAP]: http://snipsnap.org/
