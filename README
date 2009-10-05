@@ -72,8 +72,8 @@ There are basically 2 kinds of elements :
   + email
   + roles
   + status
-  + ctime
-  + mtime
+  + cTime
+  + mTime
   + lastAccess
   + lastLogin
   + lastLogout
@@ -109,7 +109,7 @@ What is available here ?
 
 * snipexport.c ::
 
-  A small C program enabling you to exporting data stored in SnipSnap
+  A small C program enabling you to export data stored in SnipSnap
   dump file into many files.
 
   You need libxml2-dev installed to compile it. Correct CFLAGS and

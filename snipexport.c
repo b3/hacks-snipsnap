@@ -16,40 +16,67 @@
 
 /****************************************************************************/
 
-#define DEBUG 1
+#define DEBUG 0
 
 /****************************************************************************/
 
 static char * snip_root = "snipspace";
+static char * user_name = "user";
+static char * user_content[] =
+  {
+    "login",
+    "passwd",
+    "email",
+    "roles",
+    "status",
+    "cTime",
+    "mTime",
+    "lastAccess",
+    "lastLogin",
+    "lastLogout",
+    "application",
+    NULL
+  };
+static char * snip_name = "snip";
+static char * snip_content[] =
+  {
+    "name",
+    "oUser",
+    "cUser",
+    "mUser",
+    "cTime",
+    "mTime",
+    "permissions",
+    "backlinks",
+    "sniplinks",
+    "labels",
+    "attachments",
+    "viewCount",
+    "content",
+    "application",
+    "parentSnip",
+    "commentSnip",
+    NULL
+  };
 static char * attachments_name = "attachments";
 static char * attachment_name = "attachment";
-static char * attachment_content[] = {
-  "name",
-  "content-type",
-  "size",
-  "date",
-  "location",
-  "data",
-  NULL
-};
+static char * attachment_content[] =
+  {
+    "name",
+    "content-type",
+    "size",
+    "date",
+    "location",
+    "data",
+    NULL
+  };
 static char * command_name;
-
-/****************************************************************************/
-
-static void dmesg(char* format, ...);
-static void pmesg(char* format, ...);
-static void usage(char * name);
-static xmlNodePtr next_element(xmlDocPtr doc, xmlNodePtr cur, xmlChar * elt);
-static xmlNodePtr next_child(xmlDocPtr doc, xmlNodePtr cur, xmlChar * elt);
-static void show_element(xmlDocPtr doc, xmlNodePtr cur, FILE * out);
-static void write_element(xmlDocPtr doc, xmlNodePtr cur, xmlChar * elt, char * dir, char * name);
-static void write_attachment(xmlDocPtr doc, xmlNodePtr cur, xmlChar * elt, char * dir, char * name, int n);
 
 /****************************************************************************/
 
 static void dmesg(char* format, ...)
 {
-#ifdef DEBUG
+#if DEBUG > 1
   va_list args;
 
   va_start(args, format);
@@ -80,7 +107,7 @@ static void pmesg(char* format, ...)
 
 static void usage(char * name)
 {
-  fprintf(stderr, "\nusage: %s XMLFILE OUTPUT_DIR 1ST_LEVEL_ELT CONTENT_ELT\n\n", name);
+  fprintf(stderr, "\nusage: %s XMLFILE DIR {user|snip}\n\n", name);
 }
 
 /****************************************************************************/
@@ -121,9 +148,9 @@ static xmlNodePtr next_child(xmlDocPtr doc,
 
 /****************************************************************************/
 
-static void show_element(xmlDocPtr doc,
-                         xmlNodePtr cur,
-                         FILE * out)
+static void dump_leaf(xmlDocPtr doc,
+                      xmlNodePtr cur,
+                      FILE * out)
 {
   xmlChar * content;
 
@@ -140,101 +167,186 @@ static void show_element(xmlDocPtr doc,
 
 /****************************************************************************/
 
-static void write_element(xmlDocPtr doc,
-                          xmlNodePtr cur,
-                          xmlChar * elt,
-                          char * dir,
-                          char * name)
+static char * create_directory(char * dir,
+                               int n)
+{
+  int size; 
+  char * name;
+
+  /* Set basename of output directory */
+  size = strlen(dir) + 1 + 4 + 1;
+  name = (char *) malloc(size);
+  if (name == NULL)
+  {
+    pmesg("cannot allocate memory: file %s: line %d", __FILE__, __LINE__);
+    return NULL;
+  }
+  *name = 0;
+  snprintf(name, size, "%s/%.4d", dir, n);
+  
+  /* Create output directory */
+  if (mkdir(name, 0777))
+  {
+    pmesg("cannot create %s directory", name);
+    free(name);
+    return NULL;
+  }
+
+  return name;
+}
+
+/****************************************************************************/
+
+static void dump_element(xmlDocPtr doc,
+                         xmlNodePtr cur,
+                         char * elt,
+                         char * dir)
 {
   xmlNodePtr ptr;
   int size;
-  char * fname;
+  char * name;
   FILE * file;
 
   /* Prepare filename */
-  size = strlen(dir) + 1 + strlen(name) + 1 + xmlStrlen(elt) + 1;
-  fname = (char *) malloc(size);
-  if (fname == NULL)
+  size = strlen(dir) + 1 + xmlStrlen(elt) + 1;
+  name = (char *) malloc(size);
+  if (name == NULL)
   {
-    pmesg("cannot allocate memory: file %s: line %d", __FILE__, __LINE__);
+    pmesg("cannot allocate memory: file %s: line %d", __FILE__, __LINE__);  
+    return;
   }
-  *fname = 0;
-  snprintf(fname, size, "%s/%s-%s", dir, name, (char *) elt);
+  *name = 0;
+  snprintf(name, size, "%s/%s", dir, (char *) elt);
   
   /* Open file */
-  file = fopen(fname, "w");
+  file = fopen(name, "w");
   if (file == NULL)
   {
-    pmesg("cannot open file %s", fname);
-    free(fname);
+    pmesg("cannot open file %s", name);
+    free(name);
     return;
   }
   
-  /* Get content into file */
+  /* Write content into file */
   ptr = next_child(doc, cur, elt);
   if (ptr != NULL)
   {
-    show_element(doc, ptr, file);
+    dump_leaf(doc, ptr, file);
   }
   else
   {
-    pmesg("no element <%s> in <%s> for %s", elt, cur->name, name);
+    pmesg("file %s: no element <%s> in <%s>", dir, elt, cur->name);
   }
   
   /* Clean up */
   if (fclose(file) != 0)
   {
-    pmesg("cannot close file %s", fname);
+    pmesg("cannot close file %s", name);
   }
-  free(fname);
+  free(name);
 }
 
 /****************************************************************************/
 
-static void write_attachment(xmlDocPtr doc,
-                             xmlNodePtr cur,
-                             xmlChar * elt,
-                             char * dir,
-                             char * name,
-                             int n)
+static int dump_node(xmlDocPtr doc,
+                     xmlNodePtr cur,
+                     char ** content,
+                     char * dir)
 {
-  char * fname;
-  int size;
-
-  /* Prepare output file name */
-  size = strlen(name) + 1 + strlen(attachment_name) + 1 + 4 + 1;
-  fname = (char *) malloc(size);
-  if (fname == NULL)
-  {
-    pmesg("cannot allocate memory: file %s: line %d", __FILE__, __LINE__);
-  }
-  *fname = 0;
-  snprintf(fname, size, "%s-%s-%.4d", name, attachment_name, n);
-
-  /* Get the attachment */
-  write_element(doc, cur, elt, dir, fname);
-
-  /* Clean up */
-  free(fname);
-}
-
-/****************************************************************************/
-
-int main (int argc, char ** argv)
-{
-  xmlDocPtr doc;
-  xmlNodePtr cur;
-  xmlChar * name;
-  xmlChar * searched_node;
-  xmlChar ** searched_content;
-  char * output_dir;
-  int content_size;
-  int n;
   int i;
 
+  for (i = 0; content[i] != NULL; i += 1)
+  {
+    /* dumping attachments ... */
+    if (strcmp(content[i], attachments_name) == 0)
+    {
+      xmlNodePtr ptr;
+      int n;
+      char * name;
+
+      /* Find first attachment element */
+      ptr = next_child(doc, next_child(doc, cur, attachments_name), attachment_name);
+      n = 0;
+
+      /* Browse every attachment */
+      while (ptr != NULL)
+      {
+        int e = 0;
+
+        /* Create a directory per attachment... */
+        name = create_directory(dir, n);
+        if (name == NULL)
+        {
+          return;
+        }
+
+        /* ...and store every attachment infos into it */
+        while(attachment_content[e] != NULL)
+        {
+          dump_element(doc, ptr, attachment_content[e], name);
+          e += 1;
+        }
+
+        /* Next attachment */
+        ptr = next_element(doc, ptr, attachment_name);
+        n += 1;
+        free(name);
+      }
+    }
+    /* ... or something else*/
+    else
+    {
+      dump_element(doc, cur, content[i], dir);
+    }
+  }
+}
+
+/****************************************************************************/
+
+static int browse_tree(xmlDocPtr doc,
+                       xmlNodePtr cur,
+                       char * node,
+                       char ** content,
+                       char * dir)
+{
+  int n; 
+
+  n = 0;
+  while (cur != NULL)
+  {
+    char * name;
+    int size;
+
+    /* Create a directory per node */
+    name = create_directory(dir, n);
+    if (name == NULL)
+    {
+      return 1;
+    }
+
+    /* Dump content of node */
+    if (dump_node(doc, cur, content, name) != 0)
+    {
+      free(name);
+      return -1;
+    }
+    
+    /* Next node */
+    cur = next_element(doc, cur, node);
+    n += 1;
+    free(name);
+  }
+
+  return 0;
+}
+
+/****************************************************************************/
+
+int check_parameters(int argc,
+                     char ** argv)
+{
   command_name = argv[0];
 
-  /* Checking parameters */
   if (argv[1] == NULL)
   {
     pmesg("document filename not specified");
@@ -249,127 +361,160 @@ int main (int argc, char ** argv)
   }
   else if (argv[3] == NULL)
   {
-    pmesg("first level element not specified");
-    usage(argv[0]);
-    return 1;
-  }
-  else if (argv[4] == NULL)
-  {
-    pmesg("content to dump not specified");
+    pmesg("snip or user not specified");
     usage(argv[0]);
     return 1;
   }
 
+  return 0;
+}
+
+/****************************************************************************/
+
+int initialize_tree(char * name,
+                    xmlDocPtr * doc,
+                    xmlNodePtr * cur)
+{
   /* Parse file */
-  doc = xmlParseFile(argv[1]);
-  if (doc == NULL ) {
+  *doc = xmlParseFile(name);
+  if (*doc == NULL )
+  {
     pmesg("document not parsed successfully");
     return 1;
   }
 
-  cur = xmlDocGetRootElement(doc);
-  if (cur == NULL) {
+  /* Verify tree */
+  *cur = xmlDocGetRootElement(*doc);
+  if (*cur == NULL) {
     pmesg("empty document");
-    xmlFreeDoc(doc);
+    xmlFreeDoc(*doc);
     return 1;
   }
-
-  if (xmlStrcmp(cur->name, (const xmlChar*) snip_root) != 0)
+  if (xmlStrcmp((*cur)->name, (const xmlChar*) snip_root) != 0)
   {
     pmesg("document of the wrong type, root node != %s", snip_root);
-    xmlFreeDoc(doc);
+    xmlFreeDoc(*doc);
     return 1;
   }
-
-  /* Output directory */
-  output_dir = strdup(argv[2]);
-  if (mkdir(output_dir, 0777) != 0)
-  {
-    pmesg("cannot create output directory");
-    xmlFreeDoc(doc);
-    return 1;   
-  }
-
-  /* First level element name */
-  searched_node = xmlCharStrdup(argv[3]);
-
-  /* List of contents to get in each first level element */
-  content_size = argc - 4;
-
-  searched_content = (xmlChar **) malloc(content_size * sizeof(xmlChar *));
-  if (searched_content == NULL)
-  {
-    pmesg("cannot allocate memory: file %s: line %d", __FILE__, __LINE__);
-    xmlFreeDoc(doc);
-    return 1;   
-  }
-
-  for (i = 0; i < content_size ; i += 1)
-  {
-    searched_content[i] = xmlCharStrdup(argv[i+4]);
-  }
-
-  /* First element under root element */
-  cur = next_element(doc, cur->xmlChildrenNode, searched_node);
-
-  /* Browse tree for each element */
-  n = 0;
-  do
-  {
-    char name[5];
-    int i;
-
-    /* Fix base name of output file */
-    *name = 0;
-    snprintf(name, 5, "%.4d", n);
-
-    /* Browse asked content */
-    for (i = 0; i < content_size; i += 1)
-    {
-      /* Any data other than attachments are identically stored */
-      if (strcmp(searched_content[i], attachments_name) != 0)
-      {
-        write_element(doc, cur, searched_content[i], output_dir, name);
-      }
-      /* Attachments are special and may be multiple */
-      else
-      {
-        xmlNodePtr ptr;
-        int an;
-
-        ptr = next_child(doc, next_child(doc, cur, attachments_name), attachment_name);
-        an = 0;
-
-        while (ptr != NULL)
-        {
-          int e = 0;
-
-          while(attachment_content[e] != NULL)
-          {
-            write_attachment(doc, ptr, attachment_content[e], output_dir, name, an);
-            e += 1;
-          }
-          ptr = next_element(doc, ptr, attachment_name);
-          an += 1;
-        }
-      }
-    }
-    
-    /* Next element */
-    cur = next_element(doc, cur, searched_node);
-    n += 1;
-  }
-  while (cur != NULL);
-
-  /* Clean everything */
-  xmlFreeDoc(doc);
-  free(output_dir);
-  free(searched_node);
-  for (i = 0; i < content_size ; i += 1)
-  {
-    free(searched_content[i]);
-  }
-  free(searched_content);
 
   return 0;
 }
+
+/****************************************************************************/
+
+int initialize_dir(char * name, char ** dir)
+{
+  *dir = strdup(name);
+  if (mkdir(*dir, 0777) != 0)
+  {
+    pmesg("cannot create %s directory", *dir);
+    return 1;   
+  }
+  
+  return 0;
+}
+
+/****************************************************************************/
+
+int initialize_search(int argc,
+                      char ** argv,
+                      char ** node,
+                      char *** content)
+{
+  /* What to export: user or snip ? */
+  *node = strdup(argv[3]);
+  if (strcmp(*node, user_name) != 0 && strcmp(*node, snip_name) != 0)
+  {
+    pmesg("cannot extract <%s> element", argv[3]);
+    free(*node);
+    return 1;       
+  }
+
+  /* Extract everything... */
+  if (argc - 4 == 0)
+  {
+    if (strcmp(*node, user_name) == 0)
+    {
+      *content = user_content;
+    }
+    else
+    {
+      *content = snip_content;
+    }
+  }
+  /* ... or specified content only */
+  else
+  {
+    int i;
+
+    *content = (char **) malloc(argc - 4 + 1);
+    if (*content == NULL)
+    {
+      pmesg("cannot allocate memory: file %s: line %d", __FILE__, __LINE__);
+      return 1;   
+    }
+
+    for (i = 0; argv[i+4] != NULL ; i += 1)
+    {
+      (*content)[i] = strdup(argv[i+4]);
+    }
+    (*content)[i] = NULL;
+  }
+  
+  return 0;
+}
+
+/****************************************************************************/
+
+int main (int argc, char ** argv)
+{
+  xmlDocPtr doc;
+  xmlNodePtr cur;
+  char * node;
+  char ** content;
+  char * dir;
+
+  /* Initialization */
+  if (check_parameters(argc, argv) != 0)
+  {
+    return 1;
+  }
+  if (initialize_tree(argv[1], &doc, &cur) != 0)
+  {
+    return 1;
+  }
+  if (initialize_dir(argv[2], &dir) != 0)
+  {
+    xmlFreeDoc(doc);
+    return 1;
+  }
+  if (initialize_search(argc, argv, &node, &content) != 0)
+  {
+    xmlFreeDoc(doc);
+    free(dir);
+    return 1;   
+  }
+
+  /* Browse tree looking for node beginning at first element under root */
+  cur = next_element(doc, cur->xmlChildrenNode, node);
+  browse_tree(doc, cur, node, content, dir);
+
+  /* Clean everything */
+  xmlFreeDoc(doc);
+  free(dir);
+  free(node);
+  if (argc - 4 != 0)
+  {
+    int i;
+
+    for (i = 0; content[i] != NULL ; i += 1)
+    {
+      free(content[i]);
+    }
+    free(content);
+  }
+
+  return 0;
+}
+
+/* End */
