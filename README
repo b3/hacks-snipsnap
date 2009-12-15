@@ -57,7 +57,7 @@ For the explanation I consider : DEST=/tmp/snips
 9- Export Database in SnipSnap Directory through the web interface
 
 10- Copy the exported database where you want to work with it. The
-   exported database is the file :
+    exported database is the file :
    
    $DEST/applications/_8668_/webapp/WEB-INF/WIKI-DATE.snip
 
