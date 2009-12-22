@@ -1,25 +1,25 @@
 What are these hacks anyway ?
------------------------------
+=============================
 
-I used to manage a wiki/blog website using the Snip Snap [SNIPSNAP]
-system for an organization I am involved in. I did not choose this
-system which was imposed to me due to time constraints. I consider it
-to be a really bad choice for different reasons amongst which memory
+I used to manage a wiki/blog website using the [Snip Snap][1] system
+for an organization I am involved in. I did not choose this system
+which was imposed to me due to time constraints. I consider it to be a
+really bad choice for different reasons amongst which memory
 greediness and very poor documentation of the storage data structure.
 
 Once its developpement ceased and after numerous crashes due to memory
 lack on the hosting computer I decide to change the wiki system to
-another one much more supported and documented (I choose Ikiwiki
-[IKIWIKI] for those who are interested). Unfortunately since no good
-documentation of the content storage structure was available this
-turns to be a nightmare.
+another one much more supported and documented (I first choose
+[Ikiwiki][2] but then write my own system for those who are
+interested). Unfortunately since no good documentation of the content
+storage structure was available this turns to be a nightmare.
 
 I thus decide to document everything I can and to set up some tools
 enabling one to get ride of this system without losing data stored
 into it.
 
 How to dump data stored in a SNIP-SNAP system
----------------------------------------------
+=============================================
 
 For the explanation I consider : DEST=/tmp/snips
 
@@ -33,16 +33,14 @@ For the explanation I consider : DEST=/tmp/snips
    file what is sensible is the snipsnap.server.webapp.root key. In
    the following example I put the value to be in $DEST.
 
---
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE map SYSTEM "http://java.sun.com/dtd/preferences.dtd">
-<map MAP_XML_VERSION="1.0">
-<entry key="snipsnap.server.admin.password" value="663b9"/>
-<entry key="snipsnap.server.admin.rpc.url" value="http://localhost:8574"/>
-<entry key="snipsnap.server.encoding" value="UTF-8"/>
-<entry key="snipsnap.server.version" value="1.0b3-uttoxeter"/>
-<entry key="snipsnap.server.webapp.root" value="/tmp/snips/applications"/>
-</map>
---
+	<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE map SYSTEM "http://java.sun.com/dtd/preferences.dtd">
+	<map MAP_XML_VERSION="1.0">
+	<entry key="snipsnap.server.admin.password" value="663b9"/>
+	<entry key="snipsnap.server.admin.rpc.url" value="http://localhost:8574"/>
+	<entry key="snipsnap.server.encoding" value="UTF-8"/>
+	<entry key="snipsnap.server.version" value="1.0b3-uttoxeter"/>
+	<entry key="snipsnap.server.webapp.root" value="/tmp/snips/applications"/>
+	</map>
 
 4- Unzip the snipsnap.tgz file into $DEST
 
@@ -107,7 +105,7 @@ There are basically 2 kinds of elements :
 What is available here ?
 ------------------------
 
-* snipexport.c ::
+* snipexport.c
 
   A small C program enabling you to export data stored in SnipSnap
   dump file into many files.
@@ -115,12 +113,12 @@ What is available here ?
   You need libxml2-dev installed to compile it. Correct CFLAGS and
   LDFLAGS needed to compile it are fixed in the makefile present here.
 
-* snipsnap.tgz ::
+* snipsnap.tgz
 
   Last released version of Snip-Snap.  
 
 References
 ----------
 
-[IKIWIKI]: http://ikiwiki.info
-[SNIPSNAP]: http://snipsnap.org/
+[1]: http://snipsnap.org/
+[2]: http://ikiwiki.info
