@@ -126,7 +126,9 @@ static xmlNodePtr next_element(xmlDocPtr doc,
 
   cur = cur->next;
 
-  while (cur != NULL && (cur->type != XML_ELEMENT_NODE || xmlStrcmp(cur->name, (const xmlChar*)elt) != 0))
+  while (cur != NULL
+		 && (cur->type != XML_ELEMENT_NODE
+			 || xmlStrcmp(cur->name, (const xmlChar*)elt) != 0))
   {
     cur = cur->next;
   }
@@ -144,7 +146,9 @@ static xmlNodePtr next_child(xmlDocPtr doc,
 
   cur = cur->xmlChildrenNode;
 
-  while (cur != NULL && (cur->type != XML_ELEMENT_NODE || xmlStrcmp(cur->name, (const xmlChar*)elt) != 0))
+  while (cur != NULL
+		 && (cur->type != XML_ELEMENT_NODE
+			 || xmlStrcmp(cur->name, (const xmlChar*)elt) != 0))
   {
     cur = cur->next;
   }
@@ -271,7 +275,9 @@ static int dump_node(xmlDocPtr doc,
       char * name;
 
       /* Find first attachment element */
-      ptr = next_child(doc, next_child(doc, cur, attachments_name), attachment_name);
+      ptr = next_child(doc,
+					   next_child(doc, cur, attachments_name),
+					   attachment_name);
       n = 0;
 
       /* Browse every attachment */
@@ -382,7 +388,7 @@ int initialize_tree(char * name,
                     xmlNodePtr * cur)
 {
   /* Parse file */
-  *doc = xmlParseFile(name);
+  *doc = xmlReadFile(name, NULL, XML_PARSE_HUGE);
   if (*doc == NULL )
   {
     pmesg("document not parsed successfully");
