@@ -3,10 +3,11 @@
  *
  * Copyright (C) 2009 Bruno BEAUFILS <bruno@boulgour.com>
  * 
+ * This software comes with ABSOLUTELY NO WARRANTY.
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the
- * License, or (at your option) any later version.
+ * published by the Free Software Foundation in its version 2.
+ * See the README or COPYING file for details.
  *
  */
 
@@ -127,8 +128,8 @@ static xmlNodePtr next_element(xmlDocPtr doc,
   cur = cur->next;
 
   while (cur != NULL
-		 && (cur->type != XML_ELEMENT_NODE
-			 || xmlStrcmp(cur->name, (const xmlChar*)elt) != 0))
+         && (cur->type != XML_ELEMENT_NODE
+             || xmlStrcmp(cur->name, (const xmlChar*)elt) != 0))
   {
     cur = cur->next;
   }
@@ -147,8 +148,8 @@ static xmlNodePtr next_child(xmlDocPtr doc,
   cur = cur->xmlChildrenNode;
 
   while (cur != NULL
-		 && (cur->type != XML_ELEMENT_NODE
-			 || xmlStrcmp(cur->name, (const xmlChar*)elt) != 0))
+         && (cur->type != XML_ELEMENT_NODE
+             || xmlStrcmp(cur->name, (const xmlChar*)elt) != 0))
   {
     cur = cur->next;
   }
@@ -276,8 +277,8 @@ static int dump_node(xmlDocPtr doc,
 
       /* Find first attachment element */
       ptr = next_child(doc,
-					   next_child(doc, cur, attachments_name),
-					   attachment_name);
+                       next_child(doc, cur, attachments_name),
+                       attachment_name);
       n = 0;
 
       /* Browse every attachment */
