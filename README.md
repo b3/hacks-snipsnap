@@ -39,8 +39,9 @@ For the following explanation I consider : `DEST=/tmp/snips`
 3. Fix `$HOME/.java/.userPrefs/org/snipsnap/config.prefs.xml` using the
    template from this directory. The important part is the content of
    `$HOME/.java/.userPrefs/org/snipsnap/config/prefs.xml`, and in this file
-   what is sensible is the snipsnap.server.webapp.root key. In the following
-   example I put the value to be in `$DEST`.
+   what is sensible is the `snipsnap.server.webapp.root` key.
+   
+   In the following example I put the value to be in `$DEST`.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE map SYSTEM "http://java.sun.com/dtd/preferences.dtd">
@@ -67,7 +68,10 @@ For the following explanation I consider : `DEST=/tmp/snips`
 
 10. Copy the exported database where you want to work with it. The
     exported database is the file :
-    `$DEST/applications/_8668_/webapp/WEB-INF/WIKI-DATE.snip`.
+    
+```
+$DEST/applications/_8668_/webapp/WEB-INF/WIKI-DATE.snip`
+```
 
 What is stored in snipspace xml file ?
 --------------------------------------
