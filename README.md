@@ -42,14 +42,16 @@ For the following explanation I consider : `DEST=/tmp/snips`
    what is sensible is the snipsnap.server.webapp.root key. In the following
    example I put the value to be in `$DEST`.
 
-    <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE map SYSTEM "http://java.sun.com/dtd/preferences.dtd">
-    <map MAP_XML_VERSION="1.0">
-    <entry key="snipsnap.server.admin.password" value="663b9"/>
-    <entry key="snipsnap.server.admin.rpc.url" value="http://localhost:8574"/>
-    <entry key="snipsnap.server.encoding" value="UTF-8"/>
-    <entry key="snipsnap.server.version" value="1.0b3-uttoxeter"/>
-    <entry key="snipsnap.server.webapp.root" value="/tmp/snips/applications"/>
-    </map>
+```xml
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE map SYSTEM "http://java.sun.com/dtd/preferences.dtd">
+<map MAP_XML_VERSION="1.0">
+<entry key="snipsnap.server.admin.password" value="663b9"/>
+<entry key="snipsnap.server.admin.rpc.url" value="http://localhost:8574"/>
+<entry key="snipsnap.server.encoding" value="UTF-8"/>
+<entry key="snipsnap.server.version" value="1.0b3-uttoxeter"/>
+<entry key="snipsnap.server.webapp.root" value="/tmp/snips/applications"/>
+</map>
+```
 
 4. Unzip the `snipsnap.tgz` file into `$DEST`
 
@@ -65,8 +67,7 @@ For the following explanation I consider : `DEST=/tmp/snips`
 
 10. Copy the exported database where you want to work with it. The
     exported database is the file :
-   
-   $DEST/applications/_8668_/webapp/WEB-INF/WIKI-DATE.snip
+    `$DEST/applications/_8668_/webapp/WEB-INF/WIKI-DATE.snip`.
 
 What is stored in snipspace xml file ?
 --------------------------------------
