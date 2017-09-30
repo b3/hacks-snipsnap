@@ -124,8 +124,9 @@ What is available here ?
   A small C program enabling you to export data stored in SnipSnap
   dump file into many files.
 
-  You need libxml2-dev installed to compile it. Correct CFLAGS and
-  LDFLAGS needed to compile it are fixed in the makefile present here.
+  You need `libxml2-dev` installed to compile it. As shown in the
+  given [`makefile`](makefile), you need to adapt `CFLAGS` and
+  `LDFLAGS` to compile it.
 
 * [`snipsnap.tgz`](snipsnap.tgz)
 
