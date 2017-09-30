@@ -20,8 +20,8 @@ I thus decided to document everything I can and tried to set up some
 tools enabling one to get ride of this system without losing data
 stored into it.
 
-None of the code deliver here have been tested since a long time. Use
-it at your own risks.
+**None of the code delivered here have been tested since a long
+time. Use it at your own risks.**
 
 [1]: http://snipsnap.org/
 [2]: http://ikiwiki.info
