@@ -18,20 +18,24 @@ I thus decide to document everything I can and to set up some tools
 enabling one to get ride of this system without losing data stored
 into it.
 
+[1]: http://snipsnap.org/
+[2]: http://ikiwiki.info
+
+
 How to dump data stored in a SNIP-SNAP system
 =============================================
 
-For the explanation I consider : DEST=/tmp/snips
+For the explanation I consider : `DEST=/tmp/snips`
 
-1- Stop the snip-snap system on the host where it works
+1. Stop the snip-snap system on the host where it works
 
-2- Remove $HOME/.java/.userPrefs/org/snipsnap/
+2. Remove `$HOME/.java/.userPrefs/org/snipsnap/`
 
-3- Fix $HOME/.java/.userPrefs/org/snipsnap/config.prefs.xml using the
+3. Fix `$HOME/.java/.userPrefs/org/snipsnap/config.prefs.xml` using the
    template from this directory. The important part is the content of
-   $HOME/.java/.userPrefs/org/snipsnap/config/prefs.xml, and in this
-   file what is sensible is the snipsnap.server.webapp.root key. In
-   the following example I put the value to be in $DEST.
+   `$HOME/.java/.userPrefs/org/snipsnap/config/prefs.xml`, and in this file
+   what is sensible is the snipsnap.server.webapp.root key. In the following
+   example I put the value to be in `$DEST`.
 
 	<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE map SYSTEM "http://java.sun.com/dtd/preferences.dtd">
 	<map MAP_XML_VERSION="1.0">
@@ -42,19 +46,19 @@ For the explanation I consider : DEST=/tmp/snips
 	<entry key="snipsnap.server.webapp.root" value="/tmp/snips/applications"/>
 	</map>
 
-4- Unzip the snipsnap.tgz file into $DEST
+4. Unzip the `snipsnap.tgz` file into `$DEST`
 
-5- Copy the _8668_ directory on the host you are working in $DEST/applications
+5. Copy the `_8668_` directory on the host you are working in `$DEST/applications`
 
-6- Fix your JAVA_HOME variable
+6. Fix your `JAVA_HOME` variable
 
-7- Call $DEST/run.sh
+7. Call `$DEST/run.sh`
 
-8- Login into http://localhost:8668/
+8. Login into `http://localhost:8668`
 
-9- Export Database in SnipSnap Directory through the web interface
+9. Export Database in SnipSnap Directory through the web interface
 
-10- Copy the exported database where you want to work with it. The
+10. Copy the exported database where you want to work with it. The
     exported database is the file :
    
    $DEST/applications/_8668_/webapp/WEB-INF/WIKI-DATE.snip
@@ -64,7 +68,7 @@ What is stored in snipspace xml file ?
 
 There are basically 2 kinds of elements :
 
-* <user> containing :
+* `<user>` containing :
   + login
   + passwd
   + email
@@ -77,7 +81,7 @@ There are basically 2 kinds of elements :
   + lastLogout
   + application
 
-* <snip> containing :
+* `<snip>` containing :
   + name
   + oUser
   + cUser
@@ -105,7 +109,7 @@ There are basically 2 kinds of elements :
 What is available here ?
 ------------------------
 
-* snipexport.c
+* [`snipexport.c`](snipexport.c)
 
   A small C program enabling you to export data stored in SnipSnap
   dump file into many files.
@@ -113,12 +117,8 @@ What is available here ?
   You need libxml2-dev installed to compile it. Correct CFLAGS and
   LDFLAGS needed to compile it are fixed in the makefile present here.
 
-* snipsnap.tgz
+* [`snipsnap.tgz`](snipsnap.tgz)
 
-  Last released version of Snip-Snap.  
-
-References
-----------
-
-[1]: http://snipsnap.org/
-[2]: http://ikiwiki.info
+  Last released version of Snip-Snap. That should now be available in a
+  repository on github (https://github.com/thinkberg/snipsnap) but I, however,
+  did not check if it's the same release.
