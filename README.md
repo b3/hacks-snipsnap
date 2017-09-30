@@ -16,7 +16,7 @@ returned to Ikiwiki, for those who are interested). Unfortunately
 since no good documentation of the content storage structure was
 available this turns to be a nightmare.
 
-I thus decide to document everything I can and tried to set up some
+I thus decided to document everything I can and tried to set up some
 tools enabling one to get ride of this system without losing data
 stored into it.
 
