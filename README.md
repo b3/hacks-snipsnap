@@ -3,20 +3,25 @@ What are these hacks anyway ?
 
 I used to manage a wiki/blog website using the [Snip Snap][1] system
 for an organization I am involved in. I did not choose this system
-which was imposed to me due to time constraints. I consider it to be a
-really bad choice for different reasons amongst which memory
-greediness and very poor documentation of the storage data structure.
+which was imposed to me due to time constraints (mother of all evils
+:-). I considered that choice to be a really bad one for differents
+reasons amongst which memory greediness and very poor documentation of
+the storage data structure.
 
-Once its developpement ceased and after numerous crashes due to memory
-lack on the hosting computer I decide to change the wiki system to
-another one much more supported and documented (I first choose
-[Ikiwiki][2] but then write my own system for those who are
-interested). Unfortunately since no good documentation of the content
-storage structure was available this turns to be a nightmare.
+Once I was sur that the developpement ceased and after numerous
+crashes due to memory lack on the hosting computer I decided to change
+the wiki system to another one much more supported and documented (I
+first choose [Ikiwiki][2] but then write my own system and finally
+returned to Ikiwiki, for those who are interested). Unfortunately
+since no good documentation of the content storage structure was
+available this turns to be a nightmare.
 
-I thus decide to document everything I can and to set up some tools
-enabling one to get ride of this system without losing data stored
-into it.
+I thus decide to document everything I can and tried to set up some
+tools enabling one to get ride of this system without losing data
+stored into it.
+
+None of the code deliver here have been tested since a long time. Use
+it at your own risks.
 
 [1]: http://snipsnap.org/
 [2]: http://ikiwiki.info
@@ -25,7 +30,7 @@ into it.
 How to dump data stored in a SNIP-SNAP system
 =============================================
 
-For the explanation I consider : `DEST=/tmp/snips`
+For the following explanation I consider : `DEST=/tmp/snips`
 
 1. Stop the snip-snap system on the host where it works
 
@@ -37,14 +42,14 @@ For the explanation I consider : `DEST=/tmp/snips`
    what is sensible is the snipsnap.server.webapp.root key. In the following
    example I put the value to be in `$DEST`.
 
-	<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE map SYSTEM "http://java.sun.com/dtd/preferences.dtd">
-	<map MAP_XML_VERSION="1.0">
-	<entry key="snipsnap.server.admin.password" value="663b9"/>
-	<entry key="snipsnap.server.admin.rpc.url" value="http://localhost:8574"/>
-	<entry key="snipsnap.server.encoding" value="UTF-8"/>
-	<entry key="snipsnap.server.version" value="1.0b3-uttoxeter"/>
-	<entry key="snipsnap.server.webapp.root" value="/tmp/snips/applications"/>
-	</map>
+    <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE map SYSTEM "http://java.sun.com/dtd/preferences.dtd">
+    <map MAP_XML_VERSION="1.0">
+    <entry key="snipsnap.server.admin.password" value="663b9"/>
+    <entry key="snipsnap.server.admin.rpc.url" value="http://localhost:8574"/>
+    <entry key="snipsnap.server.encoding" value="UTF-8"/>
+    <entry key="snipsnap.server.version" value="1.0b3-uttoxeter"/>
+    <entry key="snipsnap.server.webapp.root" value="/tmp/snips/applications"/>
+    </map>
 
 4. Unzip the `snipsnap.tgz` file into `$DEST`
 
